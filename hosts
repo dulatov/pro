@@ -1,0 +1,18 @@
+[all]
+proxy ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/proxy/virtualbox/private_key
+websrv1 lsync_filename='web1.lsyncd.conf' rsync_filename='web1.rsyncd.conf' ansible_host=127.0.0.1 ansible_port=2200 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/websrv1/virtualbox/private_key
+websrv2 lsync_filename='web2.lsyncd.conf' rsync_filename='web2.rsyncd.conf' ansible_host=127.0.0.1 ansible_port=2201 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/websrv2/virtualbox/private_key
+alert ansible_host=127.0.0.1 ansible_port=2202 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/alert/virtualbox/private_key
+log ansible_host=127.0.0.1 ansible_port=2203 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/log/virtualbox/private_key
+zabbix ansible_host=127.0.0.1 ansible_port=2204 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/zabbix/virtualbox/private_key
+
+
+[front]
+proxy ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/proxy/virtualbox/private_key
+zabbix ansible_host=127.0.0.1 ansible_port=2204 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/zabbix/virtualbox/private_key
+
+
+[back]
+websrv1 lsync_filename='web1.lsyncd.conf' rsync_filename='web1.rsyncd.conf' ansible_host=127.0.0.1 ansible_port=2200 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/websrv1/virtualbox/private_key
+websrv2 lsync_filename='web2.lsyncd.conf' rsync_filename='web2.rsyncd.conf' ansible_host=127.0.0.1 ansible_port=2201 ansible_user=vagrant ansible_private_key_file=/home/mdulatov/otus/project/.vagrant/machines/websrv2/virtualbox/private_key
+

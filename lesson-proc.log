@@ -1,0 +1,108 @@
+root@otus:~/test# time for i in {1..10000}; do touch $i; done
+
+real    0m11,864s
+user    0m7,313s
+sys     0m5,314s
+root@otus:~/test#
+root@otus:~/test# time for i in {1..10000}; do > $i; done
+
+real    0m0,171s
+user    0m0,051s
+sys     0m0,116s
+root@otus:~/test#
+
+root@otus:~# ps -elf | grep ls
+4 S root        1024       1  0  80   0 - 63706 do_pol 11:56 ?        00:00:09 /usr/bin/vmtoolsd
+0 S gdm         1822    1645  0  69 -11 - 227183 do_pol 11:56 ?       00:00:00 /usr/bin/pulseaudio --daemonize=no --log-target=journal
+0 S mdulatov    2768    2755  0  80   0 - 77051 do_pol 11:58 ?        00:00:00 /usr/bin/pulseaudio --daemonize=no --log-target=journal
+0 Z root      438026  438025  0  80   0 -     0 -      15:24 pts/1    00:00:00 [ls] <defunct>
+0 S root      444068  438971  0  80   0 -  5099 pipe_r 15:27 pts/3    00:00:00 grep --color=auto ls
+root@otus:~# ps -elf | grep 438025
+0 S root      438025  303144  0  80   0 -  7811 do_sel 15:24 pts/1    00:00:00 /usr/bin/python3 ./z.py
+0 Z root      438026  438025  0  80   0 -     0 -      15:24 pts/1    00:00:00 [ls] <defunct>
+0 S root      445244  438971  0  80   0 -  5099 pipe_r 15:28 pts/3    00:00:00 grep --color=auto 438025
+root@otus:~#
+root@otus:~# ps -elf | grep Z
+F S UID          PID    PPID  C PRI  NI ADDR SZ WCHAN  STIME TTY          TIME CMD
+0 Z root      438026  438025  0  80   0 -     0 -      15:24 pts/1    00:00:00 [ls] <defunct>
+0 S root      445835  438971  0  80   0 -  5099 pipe_r 15:28 pts/3    00:00:00 grep --color=auto Z
+
+root@otus:~# ps -elf | grep dd
+1 S root           2       0  0  80   0 -     0 kthrea 11:56 ?        00:00:00 [kthreadd]
+1 I root         138       2  0  60 -20 -     0 rescue 11:56 ?        00:00:00 [ipv6_addrconf]
+4 S message+    1329       1  0  80   0 -  2558 ep_pol 11:56 ?        00:00:01 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+0 S gdm         1834    1645  0  80   0 -  2142 ep_pol 11:56 ?        00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+0 S gdm         1841    1840  0  80   0 -  2208 ep_pol 11:56 tty1     00:00:00 dbus-daemon --nofork --print-address 4 --session
+0 S gdm         1962    1957  0  80   0 -  2074 ep_pol 11:56 tty1     00:00:00 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 11 --address=unix:path=/run/user/127/at-spi/bus
+0 S mdulatov    2789    2755  0  80   0 -  2141 ep_pol 11:58 ?        00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+0 R root      460030  303144 96  80   0 -  4898 -      15:36 pts/1    00:00:13 dd if=/dev/urandom of=/dev/null
+0 S root      460434  303144  0  80   0 -  5099 pipe_r 15:36 pts/1    00:00:00 grep --color=auto dd
+root@otus:~# kill -9 303144
+Killed
+root@otus:~# ps -elf | grep Z
+F S UID          PID    PPID  C PRI  NI ADDR SZ WCHAN  STIME TTY          TIME CMD
+0 Z root      484897  484896  0  80   0 -     0 -      15:50 pts/4    00:00:00 [ls] <defunct>
+0 S root      487049  438971  0  80   0 -  5099 pipe_r 15:51 pts/3    00:00:00 grep --color=auto Z
+root@otus:~# gdb -p 484896
+root@otus:~# find /proc/[0-9]*/fd/ -type l -exec ls -l {} \;
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 11:56 /proc/939/fd/4 -> 'anon_inode:[eventpoll]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/5 -> 'anon_inode:[signalfd]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/6 -> 'anon_inode:[timerfd]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/7 -> 'socket:[41826]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/8 -> 'socket:[41827]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/9 -> 'socket:[41828]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/10 -> 'socket:[41829]'
+lr-x------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/11 -> anon_inode:inotify
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/12 -> 'anon_inode:[timerfd]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/13 -> 'anon_inode:[timerfd]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/14 -> 'anon_inode:[timerfd]'
+lrwx------ 1 systemd-timesync systemd-timesync 64 фев 14 16:48 /proc/939/fd/15 -> 'socket:[42454]'
+lrwx------ 1 root root 64 фев 14 16:48 /proc/949/fd/0 -> /dev/null
+lrwx------ 1 root root 64 фев 14 16:48 /proc/949/fd/1 -> /dev/null
+lrwx------ 1 root root 64 фев 14 16:48 /proc/949/fd/2 -> /dev/null
+l-wx------ 1 root root 64 фев 14 16:48 /proc/949/fd/3 -> /run/blkmapd.pid
+lr-x------ 1 root root 64 фев 14 16:48 /proc/949/fd/4 -> anon_inode:inotify
+lrwx------ 1 root root 64 фев 14 16:48 /proc/949/fd/5 -> 'socket:[41707]'
+lrwx------ 1 root root 64 фев 14 16:48 /proc/961/fd/0 -> /dev/null
+lrwx------ 1 root root 64 фев 14 16:48 /proc/961/fd/1 -> /dev/null
+lrwx------ 1 root root 64 фев 14 16:48 /proc/961/fd/2 -> /dev/null
+lrwx------ 1 root root 64 фев 14 16:48 /proc/961/fd/3 -> 'anon_inode:[eventpoll]'
+lr-x------ 1 root root 64 фев 14 16:48 /proc/961/fd/4 -> 'pipe:[41732]'
+l-wx------ 1 root root 64 фев 14 16:48 /proc/961/fd/5 -> 'pipe:[41732]'
+lrwx------ 1 root root 64 фев 14 16:48 /proc/961/fd/6 -> /var/lib/nfs/nfsdcld/main.sqlite
+lr-x------ 1 root root 64 фев 14 16:48 /proc/961/fd/7 -> anon_inode:inotify
+lrwx------ 1 root root 64 фев 14 16:48 /proc/961/fd/8 -> /run/rpc_pipefs/nfsd/cld
+lrwx------ 1 root root 64 фев 14 11:56 /proc/962/fd/0 -> /dev/null
+lrwx------ 1 root root 64 фев 14 11:56 /proc/962/fd/1 -> /dev/null
+lrwx------ 1 root root 64 фев 14 11:56 /proc/962/fd/2 -> /dev/null
+lrwx------ 1 root root 64 фев 14 11:56 /proc/962/fd/4 -> 'socket:[40388]'
+lrwx------ 1 root root 64 фев 14 11:56 /proc/962/fd/5 -> 'anon_inode:[eventpoll]'
+lr-x------ 1 root root 64 фев 14 16:48 /proc/962/fd/6 -> 'pipe:[40391]'
+l-wx------ 1 root root 64 фев 14 16:48 /proc/962/fd/7 -> 'pipe:[40391]'
+lrwx------ 1 root root 64 фев 14 16:48 /proc/962/fd/8 -> /proc/962/net/rpc/nfs4.nametoid/channel
+lrwx------ 1 root root 64 фев 14 16:48 /proc/962/fd/9 -> /proc/962/net/rpc/nfs4.idtoname/channel
+lr-x------ 1 root root 64 фев 14 16:48 /proc/962/fd/10 -> anon_inode:inotify
+lr-x------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/0 -> /dev/null
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/1 -> 'socket:[73247]'
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/2 -> 'socket:[73247]'
+lrwx------ 1 mdulatov mdulatov 64 фев 14 12:02 /proc/9733/fd/3 -> 'anon_inode:[eventfd]'
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/4 -> 'anon_inode:[eventfd]'
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/5 -> 'socket:[74209]'
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/6 -> 'anon_inode:[eventfd]'
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/7 -> 'socket:[74210]'
+lr-x------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/8 -> /home/mdulatov/.local/share/gvfs-metadata/root
+lrwx------ 1 mdulatov mdulatov 64 фев 14 16:48 /proc/9733/fd/9 -> /home/mdulatov/.local/share/gvfs-metadata/root-e89bf576.log
+lr-x------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/0 -> /dev/null
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/1 -> 'socket:[73259]'
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/2 -> 'socket:[73259]'
+lrwx------ 1 gdm gdm 64 фев 14 12:02 /proc/9755/fd/3 -> 'anon_inode:[eventfd]'
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/4 -> 'anon_inode:[eventfd]'
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/5 -> 'socket:[74230]'
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/6 -> 'anon_inode:[eventfd]'
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/7 -> 'socket:[74234]'
+lr-x------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/8 -> /var/lib/gdm3/.local/share/gvfs-metadata/root
+lrwx------ 1 gdm gdm 64 фев 14 16:48 /proc/9755/fd/9 -> /var/lib/gdm3/.local/share/gvfs-metadata/root-ed53ca83.log
+
+
+
+
